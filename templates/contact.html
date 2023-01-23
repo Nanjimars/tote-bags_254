@@ -1,10 +1,44 @@
+
+<!--SweetAlert-->
+<!--for alerts (check it out)-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Contact Us</title>
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
+<div class="contact_divs">
 
+    <div class="info">
+        <h4>Get in touch</h4>
+        <form action="/contact" method="POST">
+            <input type="text" name="name" placeholder="Enter your name">
+            <br>
+            <input type="email" name="email" placeholder="Email Address">
+            <br>
+            <input type="text" name="subject" placeholder="subject">
+            <br>
+            <textarea name="comment"></textarea>
+            <br>
+            <input type="submit" value="send">
+
+
+        </form>
+        <br><br>
+        <span class="text-">{{msg}}</a></span>
+
+    </div>
+    <br><br>
+    <div class="info">
+        <h3>Contact us</h3>
+        <h4>Address: Doms Beauty Shop at Buruburu</h4>
+        <h4>Phone: +2542839303</h4>
+        <h4>Email: tote_bags@gmail.com</h4>
+       <h4>Website: Tote_254.com</h4>
+    </div>
+    </div>
 </body>
 </html>
