@@ -4,6 +4,7 @@ from datetime import timedelta # used on
 
 from flask import Flask, render_template, session
 
+
 # to allow logging
 # import logging
 # logging.basicConfig(filename = 'demo.log', level=logging.DEBUG)
@@ -11,6 +12,7 @@ from flask import Flask, render_template, session
 app = Flask(__name__)
  # set key to encrypt sessions/token
 app.secret_key ='Totebags&hats'
+
  #used for CSRF protection
 # from flask_wtf.csrf import CsrfProtect
 # csrf = CsrfProtect(app)
@@ -33,6 +35,7 @@ app.config.update(
 #connecting to the database
 import pymysql
 import html #for html escaping
+
 
 
 @app.route('/')
@@ -102,27 +105,27 @@ def verify_password(hashed_password, provided_password):
 @app.route('/register', methods = ['POST', 'GET'])
 def register():
     if request.method =='POST':
-        username = html.escape(str(request.form['username']))
-        email = html.escape(str(request.form['email']))
-        password= str(request.form['password']) # passwords are usually not escaped, they are hashed
-        pwd_again = str(request.form['conf_password'])
+            username = html.escape(str(request.form['username']))
+            email = html.escape(str(request.form['email']))
+            password= str(request.form['password']) # passwords are usually not escaped, they are hashed
+            pwd_again = str(request.form['conf_password'])
 
-        import re
-        #checks if password matches with he confirmed one
-        if password!=pwd_again:
-            return render_template('register.html', msg_pass = 'Passwords do not match')
-        # I will add other elif statements to check the strength of the password. that now uses re.search
-        else:
-            conn = connection()
-            sql = 'Insert into Users(username, email, password) values(%s, %s, %s)'
-            cursor = conn.cursor()
-            try:
-                cursor.execute(sql, (username, email, hash_password(password)))
-                conn.commit()
-                return render_template('register.html', msg_pass1 = 'Sign up successful !')
-                # if password is hashed is only when it will be stored else i will fail
-            except:
-                return render_template('register.html', msg_pass2 = 'Failed, Try again later')
+            import re
+            #checks if password matches with he confirmed one
+            if password!=pwd_again:
+                return render_template('register.html', msg_pass = 'Passwords do not match')
+            # I will add other elif statements to check the strength of the password. that now uses re.search
+            else:
+                conn = connection()
+                sql = 'Insert into Users(username, email, password) values(%s, %s, %s)'
+                cursor = conn.cursor()
+                try:
+                    cursor.execute(sql, (username, email, hash_password(password)))
+                    conn.commit()
+                    return render_template('register.html', msg_pass1 = 'Sign up successful !')
+                    # if password is hashed is only when it will be stored else i will fail
+                except:
+                    return render_template('register.html', msg_pass2 = 'Failed, Try again later')
     else:
         return render_template('register.html')
 
@@ -145,8 +148,7 @@ def login():
             #columns are counted from zero
             status = verify_password(password_from_db, password) # call function to verify hashed password
             if status ==True:
-                session['email'] = email
-                session['username'] = rows_found[0]
+                session["email"] = request.form['email']
                 session['user_type'] = rows_found[3]
                 session.permanent = True
 
@@ -162,10 +164,59 @@ def login():
     else:
         return render_template('login page.html')
 
-@app.route('/products')
+@app.route('/products',  methods = ['POST', 'GET'])
 def add_products():
+    #check if user is admin
+    if "email" in session:
+        # Create a logger to inform that an admin logged in
 
-    return render_template('products.html')
+            if request.method == 'POST':
+                bag_name = html.escape(str(request.form['bag_name']))
+                color =  html.escape(str(request.form['color']))
+                price = html.escape(str(request.form['price']))
+                photo = request.files["photo"] #gets image file from form
+                #read image
+                readImage = photo.read()
+                #encode image
+                encodedImage = b64encode(readImage).decode("utf-8")
+                #Send everything to the database
+                conn = connection()
+                sql = "Insert into Products(bag_name, color, price, photo) values (%s, %s, %s, %s )"
+                cursor = conn.cursor()
+                try:
+                    cursor.execute(sql,(bag_name, color, price, encodedImage))
+                    conn.commit()
+                    return render_template('products.html', msg='Successfully Added')
+                except:
+                    return render_template('products.html', msg='System problem, try again later')
+            else:
+                return render_template('products.html')
+    else:
+        return redirect('/login')
+
+
+@app.route('/logout')
+def logout():
+    session.pop("email", None)
+    session.pop('usertype', None)
+    return redirect('/login')
+
+@app.route('/buy')
+def view():
+    if 'email' in session:
+        conn = connection()
+        sql = 'Select * from products_table'
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        if cursor.rowcount<1:
+            return render_template('buy.html', msg_goods = 'No Products Available')
+        else:
+            rows = cursor.fetchall()
+            return render_template('buy.html', rows=rows)
+
+    else:
+        return redirect('/login')
+
 
 
 
