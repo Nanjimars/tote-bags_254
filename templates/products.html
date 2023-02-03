@@ -21,11 +21,19 @@
 <br>
 <form action="/products" method="POST" enctype="multipart/form-data">
     <input class="form-control" type="text"name="bag_name" placeholder="Name of the bag"><br>
-    <input class="form-control"type="text" name="color"placeholder="Bag Color"><br>
     <input class="form-control"type="number" name="price" placeholder="Price"><br>
     <label>Upload bag image</label><br>
     <input class="control-file" name="photo" type="file" ><br>
     <br>
+    <input class="form-control"type="number" name="quantity" placeholder="Quantity"><br>
+<!--    <label> Category</label>-->
+<!--    <select name="category" id="category" required>-->
+<!--        <option value="canvas">Canvas</option>-->
+<!--        <option value="denim">Denim</option>-->
+<!--        <option value="corduroy">Corduroy</option>-->
+<!--        <option value="crotchet">Crotchet</option>-->
+
+<!--    </select>-->
     <h3 class="text-danger">{{msg}}</h3>
     <input type="submit" value="Add" class="btn btn-success">
 </form>
