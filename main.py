@@ -167,24 +167,24 @@ def login():
 @app.route('/products',  methods = ['POST', 'GET'])
 def add_products():
     #check if user is admin
-    if "email" in session:
+    if "email" in session and session['user_type'] == 'admin':
         # Create a logger to inform that an admin logged in
 
             if request.method == 'POST':
                 bag_name = html.escape(str(request.form['bag_name']))
-                color =  html.escape(str(request.form['color']))
                 price = html.escape(str(request.form['price']))
                 photo = request.files["photo"] #gets image file from form
+                quantity = html.escape(str(request.form['quantity']))
                 #read image
                 readImage = photo.read()
                 #encode image
                 encodedImage = b64encode(readImage).decode("utf-8")
                 #Send everything to the database
                 conn = connection()
-                sql = "Insert into Products(bag_name, color, price, photo) values (%s, %s, %s, %s )"
+                sql = "Insert into Products(bag_name, price, photo, quantity) values (%s, %s, %s, %s )"
                 cursor = conn.cursor()
                 try:
-                    cursor.execute(sql,(bag_name, color, price, encodedImage))
+                    cursor.execute(sql,(bag_name, price, encodedImage, quantity))
                     conn.commit()
                     return render_template('products.html', msg='Successfully Added')
                 except:
@@ -205,10 +205,10 @@ def logout():
 def view():
     if 'email' in session:
         conn = connection()
-        sql = 'Select * from products_table'
+        sql = 'Select * from Products'
         cursor = conn.cursor()
         cursor.execute(sql)
-        if cursor.rowcount<1:
+        if cursor.rowcount < 1:
             return render_template('buy.html', msg_goods = 'No Products Available')
         else:
             rows = cursor.fetchall()
@@ -223,6 +223,11 @@ def view():
 @app.route('/cart')
 def cart():
    return render_template('cart.html')
+
+
+@app.route('/restock')
+def restock():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
