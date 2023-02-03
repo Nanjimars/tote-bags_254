@@ -7,13 +7,17 @@
     <title>Landing Page</title>
 </head>
 <body>
-    <div class="container">
+    <div class="container-main">
         <nav>
             <img src="" alt="logo">
             <ul>
-                <li><a href="">About</a></li>
-                <li><a href="">Buy</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/buy">Buy</a></li>
                 <li><a href="/contact">Contact</a></li>
+                {% if 'admin' in session['user_type']%}
+                <li><a href="/products">Add new product</a></li>
+                <li><a href="/restock">Restock Products</a></li>
+                {% endif %}
             </ul>
             <img src="../static/images/cart.png" alt="cart" class="cart-icon">
 
@@ -24,7 +28,7 @@
             <h3>Where high quality bags are sold at affordable prices</h3>
 
             <div class="row">
-                 <a href="">Shop Now <span> &#x27F6; </span></a>
+                 <a href="/buy">Shop Now <span> &#x27F6; </span></a>
             </div>
         </div>
         
