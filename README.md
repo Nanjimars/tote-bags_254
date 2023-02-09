@@ -19,11 +19,12 @@ Allows admin to add products to the database
 ###### /buy
 Allows users to view products available and add them to cart
 Allows admin to view products available and delete them, and view the quantity available
+
 **Coming soon**
 Available to admin will allow admins to update the amount of bags available
 
 ###### /addtocart
-Coming soon
+**Coming soon**
 Will summarize the goods added, calculate total and allow users to check out
 
 
